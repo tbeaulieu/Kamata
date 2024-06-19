@@ -1,3 +1,5 @@
+![image](https://github.com/tbeaulieu/Kamata/assets/3193399/06b3b21b-62cf-423d-8bc7-4203170a15b7)
+
 # Kamata
  Another Ridge Racer 6 based dashboard for the GAWR dash. I've been holding off on this one for a while trying to make it correct. There is a gauge peak functionality that will engage once you start driving, and will display when you are completely stopped, and your seatbelt is disconnected.
 
