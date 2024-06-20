@@ -142,7 +142,6 @@ Item {
     x: 0
     y: 0
 
-    //Fonts
     FontLoader {
         id: dESGlightitalicMONO
         source: "./fonts/DSEG14Classic-LightItalicMONO.ttf"
@@ -428,7 +427,6 @@ Item {
             width: 145
             height: 100;
             clip: true
-            // text: 
             text: if((root.speed === 0 && !root.car_movement && root.rpm === 0) || (root.speed === 0 && root.seatbelt)){
                     parent.display
                 }
@@ -449,6 +447,7 @@ Item {
                 if(root.speedunits === 0) './kamata/km_lit.png'; else './kamata/mi_lit.png'
             }
     }
+
     //Blinkers
     Image{
         x: 355; y:60; z:4
@@ -790,7 +789,6 @@ Item {
                         root.odometer 
                     else
                         root.odometer
-        // text: root.fuel
         font.family: boosted.name
         font.pixelSize: 14
         width: 128
