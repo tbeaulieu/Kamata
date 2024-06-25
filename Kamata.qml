@@ -1,7 +1,7 @@
 import QtQuick 2.3
 import QtGraphicalEffects 1.0
 
-import "img"
+import "kamata"
 
 //     __ __                      __       
 //    / //_/___ _____ ___  ____ _/ /_____ _
