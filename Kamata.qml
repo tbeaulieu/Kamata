@@ -156,10 +156,10 @@ Item {
         if(root.sidelight){ bar_directory = "bars_lit"} 
         if(!root.sidelight){ bar_directory = "bars_unlit"}
         if(src === "OIL"){
-            return './kamata/'+ bar_directory + '/'+ Math.min(Math.max(0,Math.round((getTemp(src))/10)),15) + '.png'
+            return './kamata/'+ bar_directory + '/'+ Math.min(Math.max(0,Math.round((root.oiltemp.toFixed(0))/10)),15) + '.png'
         }
         else{
-            return './kamata/'+ bar_directory + '/'+Math.min(Math.max(0,(Math.round(getTemp(src)*.125))),15) + '.png'
+            return './kamata/'+ bar_directory + '/'+Math.min(Math.max(0,(Math.round(root.watertemp.toFixed(0)*.125))),15) + '.png'
         }
     }
 
@@ -194,13 +194,13 @@ Item {
     function getTemp(fluid){
         if(fluid == "COOLANT"){
             if(root.seatbelt && root.car_movement && root.speed === 0){ 
-                 if(root.waterunits !== 0)
+                 if(root.waterunits !== 1)
                     return easyFtemp(root.peak_water)
                 else 
                     return root.peak_water.toFixed(0)
             }
             else{
-                if(root.waterunits !== 0)
+                if(root.waterunits !== 1)
                     return easyFtemp(root.watertemp)
                 else 
                     return root.watertemp.toFixed(0)
@@ -208,13 +208,13 @@ Item {
         }
         else{
             if(root.seatbelt && root.car_movement && root.speed === 0){
-                 if(root.oiltempunits !== 0)
+                 if(root.oiltempunits !== 1)
                     return easyFtemp(root.peak_oil)
                 else 
                     return root.peak_oil.toFixed(0)
             }
             else{
-                if(root.oiltempunits !== 0)
+                if(root.oiltempunits !== 1)
                     return easyFtemp(root.oiltemp)
                 else 
                     return root.oiltemp.toFixed(0)
@@ -406,7 +406,7 @@ Item {
     }
     Item{
         z:5
-        property string speedtext: if(root.peak_speed === 0) "** PUSH 1P START **"; else "Peak Speed "+ getPeakSpeed() + "    Peak RPM " + root.peak_rpm
+        property string speedtext: if(root.peak_speed === 0 && root.rpm === 0) "** PUSH 1P START **"; else "Peak Speed "+ getPeakSpeed() + "    Peak RPM " + root.peak_rpm
         property string spacing: "   "
         property string combined: speedtext + spacing
         property string display: combined.substring(step) + combined.substring(0, step)
@@ -571,7 +571,7 @@ Item {
     Image{
         id: water_temp_bars
         x: 590; y: 210; z: 4
-        source: getBarSource('COOLANT')
+        source: getBarSource("COOLANT")
         opacity:0
         Timer{
             interval: 2500; running: root.ignition; repeat: false
