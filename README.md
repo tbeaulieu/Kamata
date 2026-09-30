@@ -1,3 +1,5 @@
+#FIXED V4 EDITION. NO UPDATES WILL BE DONE FROM NOW ON.
+
 ![image](https://github.com/tbeaulieu/Kamata/assets/3193399/06b3b21b-62cf-423d-8bc7-4203170a15b7)
 
 # Kamata
@@ -17,3 +19,4 @@ It also contains another font that I developed; BoostedRegular.ttf. All risks ar
 4) Follow the rest of the aforementioned instructions.
 
 There are some prebuilt releases for the uploader, check with the Discord Channel here: https://discord.gg/bmKFrt8XP6
+
