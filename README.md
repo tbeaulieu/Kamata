@@ -7,13 +7,24 @@ This repo contains a modified font (I redesigned it to be monospace) as download
 
 It also contains another font that I developed; BoostedRegular.ttf. All risks are on you upon using it. Distribute it freely but please remember/note who made it :)
 
+## Settings
+
+Oil temperature and oil pressure can each be hidden with their Show row in the settings menu. Oil pressure can be shown in PSI or BAR. Coolant and oil temp High limits are in Celsius, and 0 turns the warning off.
+
+## Layout
+
+- `Kamata.qml` - entry file: live data, config load/save, joystick handling, settings menu
+- `KamataDisplay.qml` - the dial itself
+- `SettingsMenu.qml`, `SettingBox.qml`, `MonoText.qml`, `Theme.qml`, `GridBackground.qml` - settings menu (shared with AgeSolo)
+- `SettingsPreview.qml` - standalone menu preview, not loaded by the dash
+- `Kamata.qml.png` - preview shown in the dash picker
+
+Settings are saved as JSON in `/opt/IC7/screen_configs/Kamata_config.json`. An existing `Kamata_config.txt` is imported once on first run.
+
 ---
 
 # Installation notes:
 
-1) Obtain the GARW dash installer here: https://github.com/dustinsterk/GARWDashUploader
-2) You will need to unzip the downloaded dashboard file, rename the folder to "Kamata_Main" (Don't use the quotes), and recompress it. (I know, it's a pain)
-3) Upload the dash via the uploader while connected to the GARW Wifi.
-4) Follow the rest of the aforementioned instructions.
+1) Install via GARW Genie:  https://github.com/dustinsterk/GARWGenie
 
 There are some prebuilt releases for the uploader, check with the Discord Channel here: https://discord.gg/bmKFrt8XP6
