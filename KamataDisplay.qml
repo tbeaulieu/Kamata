@@ -311,7 +311,8 @@ Item {
         visible: if(root.rpm >= root.rpmlimit) true; else false
         Timer{
             id: rpm_shift_blink
-            running: true
+            running: root.rpm >= root.rpmlimit     // was always running, 20 times a second
+            onRunningChanged: if(!running) parent.opacity = 1
             interval: 50
             repeat: true
             onTriggered: if(parent.opacity === 0){
