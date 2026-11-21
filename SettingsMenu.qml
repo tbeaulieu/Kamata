@@ -49,7 +49,7 @@ Item {
             { key: "blue",           label: "Blue",        type: "number", min: 0, max: 255, step: 1, wrap: true } ] },
 
         { name: "Drive", rows: [
-            { key: "speedunits",     label: "Speed units", type: "enum",   options: ["KMH", "MPH", "BOTH"] },
+            { key: "speedunits",     label: "Speed units", type: "enum",   options: ["KMH", "MPH"] },
             { key: "rpmlimit",       label: "Rpm limit",   type: "number", min: 0, max: 9000, step: 100, wrap: true } ] },
 
         // High limits are always Celsius, 0 = no warning
@@ -65,9 +65,11 @@ Item {
             { key: "oiltempunits",   label: "Units", type: "enum",   options: ["F", "C"] },
             { key: "oiltemphigh",    label: "High",  type: "number", min: 0, step: 1 } ] },
 
+        // Low is always bar, 0 = no warning
         { name: "Oil press", rows: [
             { key: "oilpressureshow",  label: "Show",  type: "enum",   options: ["OFF", "ON"] },
-            { key: "oilpressureunits", label: "Units", type: "enum",   options: ["PSI", "BAR"] } ] },
+            { key: "oilpressureunits", label: "Units", type: "enum",   options: ["PSI", "BAR"] },
+            { key: "oilpressurelow",   label: "Low",   type: "number", min: 0, step: 1 } ] },
 
         { name: "Save & Exit", action: true, glyph: '○', rows: [] }
     ]
@@ -264,8 +266,6 @@ Item {
                     menu.height - th.footH - 8 - height)
         Behavior on y { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
 
-        // opacity: !menu.open ? 0 : (menu.level === 1 ? 1.0 : 0.2)
-        Behavior on opacity { NumberAnimation { duration: 160 } }
         Rectangle {                                 // solid backing: nothing shows through
             x: -6; y: -6
             width: fly.width + 12

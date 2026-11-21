@@ -18,11 +18,11 @@ Item{
     property bool udp_down:udp_message&0x02
     property bool udp_left:udp_message&0x04
     property bool udp_right:udp_message&0x08
-    property int odometer:if(speedunits==0)rpmtest.odometer0data;else rpmtest.odometer0data*0.62
-    property int tripmeter:if(speedunits==0)rpmtest.tripmileage0data;else rpmtest.tripmileage0data*0.62
+    property int odometer:if(speedunits==0)rpmtest.odometer0data;else rpmtest.odometer0data*0.621371
+    property int tripmeter:if(speedunits==0)rpmtest.tripmileage0data;else rpmtest.tripmileage0data*0.621371
     property real rpm:rpmtest.rpmdata
     property real speed:rpmtest.speeddata
-    property int speedunits:1
+    property int speedunits:1             // 0 = KMH, 1 = MPH
     property real watertemp:rpmtest.watertempdata
     property real fuel:rpmtest.fueldata
     property real o2:rpmtest.o2data
@@ -65,7 +65,7 @@ Item{
     property int oiltemplow:0
     property int oiltemphigh:130
     property int oiltempunits:1
-    property int oilpressurelow:0
+    property int oilpressurelow:1         // bar; readout turns red below this, 0 = no warning
     property int oilpressurehigh:0
     property int oilpressureunits:1       // 0 = PSI, 1 = BAR (what this dash always showed)
 
@@ -122,14 +122,13 @@ Item{
         { key: "waterhigh" },      { key: "waterunits" },
         { key: "fuellow" },
         { key: "oiltempshow" },    { key: "oiltemphigh" },     { key: "oiltempunits" },
-        { key: "oilpressureshow" },{ key: "oilpressureunits" },
+        { key: "oilpressureshow" },{ key: "oilpressureunits" }, { key: "oilpressurelow" },
         { key: "speedunits" },     { key: "rpmlimit" },
         // the Kamata dial has nothing that uses these
         { key: "waterlow",         disabled: true },
         { key: "fuelhigh",         disabled: true },
         { key: "fuelunits",        disabled: true },
         { key: "oiltemplow",       disabled: true },
-        { key: "oilpressurelow",   disabled: true },
         { key: "oilpressurehigh",  disabled: true },
         { key: "shiftvalue",       disabled: true },
         { key: "night_time_hue",   disabled: true },
@@ -192,6 +191,7 @@ Item{
                     var k = editableSettings[i].key
                     if (obj.hasOwnProperty(k)) applyConfigValue(k, obj[k])
                 }
+                if (root.speedunits !== 0) root.speedunits = 1     // no "both" mode on this dial
                 return "json"
             } catch (e) {
                 console.log("config JSON invalid, keeping defaults and NOT overwriting: " + e)
@@ -203,10 +203,11 @@ Item{
         if (old.length > 0) {
             for (var j = 0; j < old.length && j < legacyKeys.length; j++) {
                 var lk = legacyKeys[j]
-                // The old oil pressure units setting did nothing on this dash (it always showed bar),
-                // so it is not imported
-                if (lk && lk !== "oilpressureunits") applyConfigValue(lk, old[j])
+                // The old oil pressure Units and Low settings did nothing on this dash
+                // (it always showed bar and had no warning), so they are not imported
+                if (lk && lk !== "oilpressureunits" && lk !== "oilpressurelow") applyConfigValue(lk, old[j])
             }
+            if (root.speedunits !== 0) root.speedunits = 1     // no "both" mode on this dial
             return "legacy"
         }
         return "none"
