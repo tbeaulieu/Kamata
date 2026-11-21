@@ -70,7 +70,7 @@ Item {
     property bool right_joystick: inputs & 0x40000000 || root.udp_right
 
     property int odometer: rpmtest.odometer0data/10 //Overridden by Kamata.qml: km or miles to match speedunits, div by 10 to get 6 digits
-    property int tripmeter: rpmtest.tripmileage0data*0.62
+    property int tripmeter: rpmtest.tripmileage0data*0.621371
     property real value: 0
     property real shiftvalue: 0
 
@@ -108,7 +108,7 @@ Item {
 
     property real batteryvoltage: rpmtest.batteryvoltagedata
 
-    property int mph: (speed * 0.62)
+    property int mph: Math.round(speed * 0.621371)
 
     property int gearpos: rpmtest.geardata
 
@@ -197,7 +197,7 @@ Item {
     }
     
     function getPeakSpeed(){
-        if (root.speedunits === 0) return root.peak_speed.toFixed(0); else return (root.peak_speed*.62).toFixed(0)
+        if (root.speedunits === 0) return root.peak_speed.toFixed(0); else return (root.peak_speed*.621371).toFixed(0)
     }
 
     function getTemp(fluid){
@@ -243,11 +243,13 @@ Item {
             }
         }
     }
-    //Master Timer 
-    Timer{
-        interval: 2; running: true; repeat: true //Maybe we need to change interval time depending on potential lag, shouldn't be that much though
-        onTriggered: checkPeaks()
-    }
+    // Peaks are checked whenever one of the values changes. This replaces a timer that
+    // ran every 2 ms, all the time, to do the same comparisons.
+    onRpmChanged: checkPeaks()
+    onSpeedChanged: checkPeaks()
+    onWatertempChanged: checkPeaks()
+    onOiltempChanged: checkPeaks()
+    Component.onCompleted: checkPeaks()
 
     /* ########################################################################## */
     /* Main Layout items */
@@ -436,11 +438,11 @@ Item {
             width: 145
             height: 100;
             clip: true
-            text: if((root.speed === 0 && !root.car_movement && root.rpm === 0) || (root.speed === 0 && root.seatbelt)){
+            text: if((root.speed === 0 && !root.car_movement && root.rpm === 0) || (root.speed === 0 && root.seatbelt && root.car_movement)){
                     parent.display
                 }
                 else{
-                    if (root.speedunits === 0) root.speed.toFixed(0); else (root.speed*.62).toFixed(0)
+                    if (root.speedunits === 0) root.speed.toFixed(0); else (root.speed*.621371).toFixed(0)
                 }
             horizontalAlignment: Text.AlignRight
         }
@@ -482,7 +484,7 @@ Item {
     Image{
         x: 574; y: 124; z:4
         source: './img/warnings/brake.png'
-        visible: root.brake
+        visible: root.brake || root.handbrake
     }
     Image{
         x: 634; y: 124; z:4

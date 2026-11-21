@@ -18,11 +18,11 @@ Item{
     property bool udp_down:udp_message&0x02
     property bool udp_left:udp_message&0x04
     property bool udp_right:udp_message&0x08
-    property int odometer:if(speedunits==0)rpmtest.odometer0data;else rpmtest.odometer0data*0.62
-    property int tripmeter:if(speedunits==0)rpmtest.tripmileage0data;else rpmtest.tripmileage0data*0.62
+    property int odometer:if(speedunits==0)rpmtest.odometer0data;else rpmtest.odometer0data*0.621371
+    property int tripmeter:if(speedunits==0)rpmtest.tripmileage0data;else rpmtest.tripmileage0data*0.621371
     property real rpm:rpmtest.rpmdata
     property real speed:rpmtest.speeddata
-    property int speedunits:1
+    property int speedunits:1             // 0 = KMH, 1 = MPH
     property real watertemp:rpmtest.watertempdata
     property real fuel:rpmtest.fueldata
     property real o2:rpmtest.o2data
@@ -191,6 +191,7 @@ Item{
                     var k = editableSettings[i].key
                     if (obj.hasOwnProperty(k)) applyConfigValue(k, obj[k])
                 }
+                if (root.speedunits !== 0) root.speedunits = 1     // no "both" mode on this dial
                 return "json"
             } catch (e) {
                 console.log("config JSON invalid, keeping defaults and NOT overwriting: " + e)
@@ -206,6 +207,7 @@ Item{
                 // (it always showed bar and had no warning), so they are not imported
                 if (lk && lk !== "oilpressureunits" && lk !== "oilpressurelow") applyConfigValue(lk, old[j])
             }
+            if (root.speedunits !== 0) root.speedunits = 1     // no "both" mode on this dial
             return "legacy"
         }
         return "none"
