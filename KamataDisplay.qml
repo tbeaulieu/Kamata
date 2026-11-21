@@ -123,6 +123,8 @@ Item {
 
     property int oiltempshow: 1           // 0 = hide the oil temp gauge
     property int oilpressureshow: 1       // 0 = hide the oil pressure readout
+    // Oil pressure Low is bar (the sender value is bar); 0 = no warning
+    readonly property bool oilpressureOk: oilpressurelow === 0 || oilpressure >= oilpressurelow
 
     // Set by Kamata.qml (same hooks as the AgeSolo template)
     property string settingsFocus: ""   // key of the setting being edited, "" when the menu is closed
@@ -642,7 +644,7 @@ Item {
         width: 100
         opacity: 0
         text: root.oilpressureunits === 1 ? root.oilpressure.toFixed(1) : (root.oilpressure * 14.5038).toFixed(0)
-        color: if(!root.sidelight) root.primary_color; else root.lit_primary_color
+        color: if(!root.oilpressureOk) root.warning_color; else if(!root.sidelight) root.primary_color; else root.lit_primary_color
         font.family: boosted.name
         horizontalAlignment: Text.AlignRight
         Timer{
@@ -825,7 +827,7 @@ Item {
         var k = root.settingsFocus
         if (k === "waterunits" || k === "waterhigh") return 0
         if (k === "oiltempshow" || k === "oiltempunits" || k === "oiltemphigh") return 1
-        if (k === "oilpressureshow" || k === "oilpressureunits") return 2
+        if (k === "oilpressureshow" || k === "oilpressureunits" || k === "oilpressurelow") return 2
         if (k === "speedunits") return 3
         if (k === "fuellow") return 4
         return -1

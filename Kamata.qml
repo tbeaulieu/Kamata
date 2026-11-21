@@ -65,7 +65,7 @@ Item{
     property int oiltemplow:0
     property int oiltemphigh:130
     property int oiltempunits:1
-    property int oilpressurelow:0
+    property int oilpressurelow:1         // bar; readout turns red below this, 0 = no warning
     property int oilpressurehigh:0
     property int oilpressureunits:1       // 0 = PSI, 1 = BAR (what this dash always showed)
 
@@ -122,14 +122,13 @@ Item{
         { key: "waterhigh" },      { key: "waterunits" },
         { key: "fuellow" },
         { key: "oiltempshow" },    { key: "oiltemphigh" },     { key: "oiltempunits" },
-        { key: "oilpressureshow" },{ key: "oilpressureunits" },
+        { key: "oilpressureshow" },{ key: "oilpressureunits" }, { key: "oilpressurelow" },
         { key: "speedunits" },     { key: "rpmlimit" },
         // the Kamata dial has nothing that uses these
         { key: "waterlow",         disabled: true },
         { key: "fuelhigh",         disabled: true },
         { key: "fuelunits",        disabled: true },
         { key: "oiltemplow",       disabled: true },
-        { key: "oilpressurelow",   disabled: true },
         { key: "oilpressurehigh",  disabled: true },
         { key: "shiftvalue",       disabled: true },
         { key: "night_time_hue",   disabled: true },
@@ -203,9 +202,9 @@ Item{
         if (old.length > 0) {
             for (var j = 0; j < old.length && j < legacyKeys.length; j++) {
                 var lk = legacyKeys[j]
-                // The old oil pressure units setting did nothing on this dash (it always showed bar),
-                // so it is not imported
-                if (lk && lk !== "oilpressureunits") applyConfigValue(lk, old[j])
+                // The old oil pressure Units and Low settings did nothing on this dash
+                // (it always showed bar and had no warning), so they are not imported
+                if (lk && lk !== "oilpressureunits" && lk !== "oilpressurelow") applyConfigValue(lk, old[j])
             }
             return "legacy"
         }
