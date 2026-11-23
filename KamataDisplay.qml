@@ -70,7 +70,7 @@ Item {
     property bool right_joystick: inputs & 0x40000000 || root.udp_right
 
     property int odometer: rpmtest.odometer0data/10 //Overridden by Kamata.qml: km or miles to match speedunits, div by 10 to get 6 digits
-    property int tripmeter: rpmtest.tripmileage0data*0.62
+    property int tripmeter: rpmtest.tripmileage0data*0.621371
     property real value: 0
     property real shiftvalue: 0
 
@@ -108,7 +108,7 @@ Item {
 
     property real batteryvoltage: rpmtest.batteryvoltagedata
 
-    property int mph: (speed * 0.62)
+    property int mph: Math.round(speed * 0.621371)
 
     property int gearpos: rpmtest.geardata
 
@@ -123,6 +123,8 @@ Item {
 
     property int oiltempshow: 1           // 0 = hide the oil temp gauge
     property int oilpressureshow: 1       // 0 = hide the oil pressure readout
+    // Oil pressure Low is bar (the sender value is bar); 0 = no warning
+    readonly property bool oilpressureOk: oilpressurelow === 0 || oilpressure >= oilpressurelow
 
     // Set by Kamata.qml (same hooks as the AgeSolo template)
     property string settingsFocus: ""   // key of the setting being edited, "" when the menu is closed
@@ -195,7 +197,7 @@ Item {
     }
     
     function getPeakSpeed(){
-        if (root.speedunits === 0) return root.peak_speed.toFixed(0); else return (root.peak_speed*.62).toFixed(0)
+        if (root.speedunits === 0) return root.peak_speed.toFixed(0); else return (root.peak_speed*.621371).toFixed(0)
     }
 
     function getTemp(fluid){
@@ -241,11 +243,13 @@ Item {
             }
         }
     }
-    //Master Timer 
-    Timer{
-        interval: 2; running: true; repeat: true //Maybe we need to change interval time depending on potential lag, shouldn't be that much though
-        onTriggered: checkPeaks()
-    }
+    // Peaks are checked whenever one of the values changes. This replaces a timer that
+    // ran every 2 ms, all the time, to do the same comparisons.
+    onRpmChanged: checkPeaks()
+    onSpeedChanged: checkPeaks()
+    onWatertempChanged: checkPeaks()
+    onOiltempChanged: checkPeaks()
+    Component.onCompleted: checkPeaks()
 
     /* ########################################################################## */
     /* Main Layout items */
@@ -307,7 +311,8 @@ Item {
         visible: if(root.rpm >= root.rpmlimit) true; else false
         Timer{
             id: rpm_shift_blink
-            running: true
+            running: root.rpm >= root.rpmlimit     // was always running, 20 times a second
+            onRunningChanged: if(!running) parent.opacity = 1
             interval: 50
             repeat: true
             onTriggered: if(parent.opacity === 0){
@@ -434,11 +439,11 @@ Item {
             width: 145
             height: 100;
             clip: true
-            text: if((root.speed === 0 && !root.car_movement && root.rpm === 0) || (root.speed === 0 && root.seatbelt)){
+            text: if((root.speed === 0 && !root.car_movement && root.rpm === 0) || (root.speed === 0 && root.seatbelt && root.car_movement)){
                     parent.display
                 }
                 else{
-                    if (root.speedunits === 0) root.speed.toFixed(0); else (root.speed*.62).toFixed(0)
+                    if (root.speedunits === 0) root.speed.toFixed(0); else (root.speed*.621371).toFixed(0)
                 }
             horizontalAlignment: Text.AlignRight
         }
@@ -480,7 +485,7 @@ Item {
     Image{
         x: 574; y: 124; z:4
         source: './img/warnings/brake.png'
-        visible: root.brake
+        visible: root.brake || root.handbrake
     }
     Image{
         x: 634; y: 124; z:4
@@ -642,7 +647,7 @@ Item {
         width: 100
         opacity: 0
         text: root.oilpressureunits === 1 ? root.oilpressure.toFixed(1) : (root.oilpressure * 14.5038).toFixed(0)
-        color: if(!root.sidelight) root.primary_color; else root.lit_primary_color
+        color: if(!root.oilpressureOk) root.warning_color; else if(!root.sidelight) root.primary_color; else root.lit_primary_color
         font.family: boosted.name
         horizontalAlignment: Text.AlignRight
         Timer{
@@ -825,7 +830,7 @@ Item {
         var k = root.settingsFocus
         if (k === "waterunits" || k === "waterhigh") return 0
         if (k === "oiltempshow" || k === "oiltempunits" || k === "oiltemphigh") return 1
-        if (k === "oilpressureshow" || k === "oilpressureunits") return 2
+        if (k === "oilpressureshow" || k === "oilpressureunits" || k === "oilpressurelow") return 2
         if (k === "speedunits") return 3
         if (k === "fuellow") return 4
         return -1
